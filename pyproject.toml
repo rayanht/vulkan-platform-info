@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vulkan-platform-py"
-version = "0.2.0"
+version = "0.3.0"
 description = ""
 authors = ["Rayan Hatout <rayan.hatout@gmail.com>"]
 
