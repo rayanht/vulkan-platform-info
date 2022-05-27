@@ -79,9 +79,11 @@ class ExecutionPlatform:
 
     def __hash__(self) -> int:
         return hash(
-            self.operating_system.value,
-            self.get_active_hardware().hardware_vendor.value,
-            self.vulkan_backend.value,
+            (
+                self.operating_system.value,
+                self.get_active_hardware().hardware_vendor.value,
+                self.vulkan_backend.value,
+            )
         )
 
     @classmethod
