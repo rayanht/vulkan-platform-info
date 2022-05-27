@@ -1,7 +1,7 @@
 import platform
 from collections import defaultdict
-from dataclasses import dataclass
-from dataclasses import field
+from pydantic import Field
+from pydantic.dataclasses import dataclass
 from enum import Enum, _EnumDict, EnumMeta
 import GPUtil
 from cpuinfo import get_cpu_info
@@ -63,13 +63,13 @@ class HardwareInformation:
 
 @dataclass
 class ExecutionPlatform:
-    operating_system: OperatingSystem = field(
-        default_factory=lambda: OperatingSystem(platform.system()), init=False
-    )
-    available_hardware: dict[HardwareType, list[HardwareInformation]] = field(
-        default_factory=lambda: defaultdict(list), init=False
-    )
     vulkan_backend: VulkanBackend
+    operating_system: OperatingSystem = Field(
+        default_factory=lambda: OperatingSystem(platform.system())
+    )
+    available_hardware: dict[HardwareType, list[HardwareInformation]] = Field(
+        default_factory=lambda: defaultdict(list)
+    )
 
     def __str__(self) -> str:
         return f"{self.operating_system.value}/{self.get_active_hardware().hardware_vendor.value}/{self.vulkan_backend.value}"
@@ -79,7 +79,7 @@ class ExecutionPlatform:
 
     @classmethod
     def auto_detect(cls) -> Self:
-        execution_platform = cls(VulkanBackend.Vulkan)
+        execution_platform = cls(vulkan_backend=VulkanBackend.Vulkan)
         nvidia_gpus: list[GPUtil.GPU] = GPUtil.getGPUs()
         for nvidia_gpu in nvidia_gpus:
             gpu_info: HardwareInformation = HardwareInformation(
