@@ -77,6 +77,13 @@ class ExecutionPlatform:
     def __repr__(self) -> str:
         return str(self)
 
+    def __hash__(self) -> int:
+        return hash(
+            self.operating_system.value,
+            self.get_active_hardware().hardware_vendor.value,
+            self.vulkan_backend.value,
+        )
+
     @classmethod
     def auto_detect(cls) -> Self:
         execution_platform = cls(vulkan_backend=VulkanBackend.Vulkan)
