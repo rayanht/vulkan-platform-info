@@ -1,3 +1,4 @@
+import hashlib
 import platform
 from collections import defaultdict
 from pydantic import Field
@@ -6,6 +7,7 @@ from enum import Enum, _EnumDict, EnumMeta
 import GPUtil
 from cpuinfo import get_cpu_info
 from typing_extensions import Self
+import dill
 
 
 class StrEnumMeta(EnumMeta):
@@ -78,12 +80,17 @@ class ExecutionPlatform:
         return str(self)
 
     def __hash__(self) -> int:
-        return hash(
-            (
-                self.operating_system.value,
-                self.get_active_hardware().hardware_vendor.value,
-                self.vulkan_backend.value,
-            )
+        return int(
+            hashlib.sha224(
+                dill.dumps(
+                    (
+                        self.operating_system,
+                        self.get_active_hardware(),
+                        self.vulkan_backend,
+                    )
+                )
+            ).hexdigest(),
+            16,
         )
 
     @classmethod
